@@ -294,25 +294,25 @@ public:
     int headerSize = 76;//sizeof(wavHeader);
     wavFp.read((char *)&hdr, headerSize);
 
-    // Check audio format
-    if (hdr.AudioFormat != 1 || hdr.bitsPerSample != 16) {
-      // std::cerr << "Unsupported audio format, use 16 bit PCM Wave" <<
-      // std::endl;
-      return 1;
-    }
-    // Check sampling rate
-    if (hdr.SamplesPerSec != fs) {
-      // std::cerr << "Sampling rate mismatch: Found " << hdr.SamplesPerSec << "
-      // instead of " << fs <<std::endl;
-      return 1;
-    }
+    // // Check audio format
+    // if (hdr.AudioFormat != 1 || hdr.bitsPerSample != 16) {
+    //   // std::cerr << "Unsupported audio format, use 16 bit PCM Wave" <<
+    //   // std::endl;
+    //   return 1;
+    // }
+    // // Check sampling rate
+    // if (hdr.SamplesPerSec != fs) {
+    //   // std::cerr << "Sampling rate mismatch: Found " << hdr.SamplesPerSec << "
+    //   // instead of " << fs <<std::endl;
+    //   return 1;
+    // }
 
-    // Check sampling rate
-    if (hdr.NumOfChan != 1) {
-      // std::cerr << hdr.NumOfChan << " channel files are unsupported. Use
-      // mono." <<std::endl;
-      return 1;
-    }
+    // // Check sampling rate
+    // if (hdr.NumOfChan != 1) {
+    //   // std::cerr << hdr.NumOfChan << " channel files are unsupported. Use
+    //   // mono." <<std::endl;
+    //   return 1;
+    // }
 
     // Initialise buffer
     uint16_t bufferLength = winLengthSamples - frameShiftSamples;
