@@ -106,6 +106,33 @@ v_c_d_t fft(v_c_d_t x)
     //for (unsigned int i = 0; i < N; i++)
     //  x[i] *= f;
 }
+  //   v_c_d_t fft(v_c_d_t x) {
+  //   int N = x.size();
+  //   if (N == 1)
+  //     return x;
+
+  //   v_c_d_t xe(N / 2, 0), xo(N / 2, 0), Xjo, Xjo2;
+  //   int i;
+
+  //   // Construct arrays from even and odd indices
+  //   for (i = 0; i < N; i += 2)
+  //     xe[i / 2] = x[i];
+  //   for (i = 1; i < N; i += 2)
+  //     xo[(i - 1) / 2] = x[i];
+
+  //   // Compute N/2-point FFT
+  //   Xjo = fft(xe);
+  //   Xjo2 = fft(xo);
+  //   Xjo.insert(Xjo.end(), Xjo2.begin(), Xjo2.end());
+
+  //   // Butterfly computations
+  //   for (i = 0; i <= N / 2 - 1; i++) {
+  //     c_d_t t = Xjo[i], tw = twiddle[N][i];
+  //     Xjo[i] = t + tw * Xjo[i + N / 2];
+  //     Xjo[i + N / 2] = t - tw * Xjo[i + N / 2];
+  //   }
+  //   return Xjo;
+  // }
   //// Frame processing routines
   // Pre-emphasis and Hamming window
   void preEmphHam(void) {
@@ -145,8 +172,8 @@ v_c_d_t fft(v_c_d_t x)
 
   // Computing discrete cosine transform
   void applyDct(void) {
-    mfcc.assign(numCepstra + 1, 0);
-    for (int i = 0; i <= numCepstra; i++) {
+    mfcc.assign(numCepstra, 0);
+    for (int i = 0; i < numCepstra; i++) {
       for (int j = 0; j < numFilters; j++)
         mfcc[i] += dct[i][j] * lmfbCoef[j];
     }
@@ -161,15 +188,15 @@ v_c_d_t fft(v_c_d_t x)
     for (i = 0; i < winLengthSamples; i++)
       hamming[i] = 0.54 - 0.46 * cos(2 * PI * i / (winLengthSamples - 1));
 
-    v_d_t v1(numCepstra + 1, 0), v2(numFilters, 0);
-    for (i = 0; i <= numCepstra; i++)
+    v_d_t v1(numCepstra, 0), v2(numFilters, 0);
+    for (i = 0; i < numCepstra; i++)
       v1[i] = i;
     for (i = 0; i < numFilters; i++)
       v2[i] = i + 0.5;
 
-    dct.reserve(numFilters * (numCepstra + 1));
+    dct.reserve(numFilters * (numCepstra));
     float c = sqrt(2.0 / numFilters);
-    for (i = 0; i <= numCepstra; i++) {
+    for (i = 0; i < numCepstra; i++) {
       v_d_t dtemp;
       for (j = 0; j < numFilters; j++)
         dtemp.push_back(c * cos(PI / numFilters * v1[i] * v2[j]));
@@ -243,8 +270,8 @@ public:
     lowFreq = lf;         // Filterbank low frequency cutoff in Hertz
     highFreq = hf;        // Filterbank high frequency cutoff in Hertz
     numFFT = fs <= 20000 ? 512 : 2048;         // FFT size
-    winLengthSamples = winLength * fs / 1e3;   // winLength in milliseconds
-    frameShiftSamples = frameShift * fs / 1e3; // frameShift in milliseconds
+    winLengthSamples = 1 + winLength * fs / 1e3;   // winLength in milliseconds
+    frameShiftSamples = 1 + frameShift * fs / 1e3; // frameShift in milliseconds
 
     numFFTBins = numFFT / 2 + 1;
     powerSpectralCoef.assign(numFFTBins, 0);
@@ -291,7 +318,7 @@ public:
     // Read the wav header
     wavHeader hdr;
     //TODO: rewrite this shit
-    int headerSize = 76;//sizeof(wavHeader);
+    int headerSize = sizeof(wavHeader);
     wavFp.read((char *)&hdr, headerSize);
 
     // // Check audio format

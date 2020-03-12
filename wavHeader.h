@@ -16,6 +16,8 @@ struct wavHeader {
     uint32_t        bytesPerSec;    // bytes per second
     uint16_t        blockAlign;     // 2=16-bit mono, 4=16-bit stereo
     uint16_t        bitsPerSample;  // Number of bits per sample
+    uint8_t         gap[32]; // "data"  string
+
     /* "data" sub-chunk */
     uint8_t         Subchunk2ID[4]; // "data"  string
     uint32_t        Subchunk2Size;  // Sampled data length
