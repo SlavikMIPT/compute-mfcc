@@ -26,8 +26,8 @@
 #include<math.h>
 #include"wavHeader.h"
 
-typedef std::vector<float> v_d_t;
-typedef std::complex<float> c_d_t;
+typedef std::vector<double> v_d_t;
+typedef std::complex<double> c_d_t;
 typedef std::vector<v_d_t> m_d_t;
 typedef std::vector<c_d_t> v_c_d_t;
 typedef std::map<int, std::map<int, c_d_t>> twmap;
@@ -35,21 +35,21 @@ typedef std::map<int, std::map<int, c_d_t>> twmap;
 class MFCC {
 
 private:
-  const float PI = 4 * atan(1.0); // Pi = 3.14...
+  const double PI = 4 * atan(1.0); // Pi = 3.14...
   int fs;
   twmap twiddle;
   size_t winLengthSamples, frameShiftSamples, numCepstra, numFFT, numFFTBins,
       numFilters;
-  float preEmphCoef, lowFreq, highFreq;
+  double preEmphCoef, lowFreq, highFreq;
   v_d_t frame, powerSpectralCoef, lmfbCoef, hamming, mfcc, prevsamples;
   m_d_t fbank, dct;
 
 private:
   // Hertz to Mel conversion
-  inline float hz2mel(float f) { return 2595 * std::log10(1 + f / 700); }
+  inline double hz2mel(double f) { return 2595 * std::log10(1 + f / 700); }
 
   // Mel to Hertz conversion
-  inline float mel2hz(float m) { return 700 * (std::pow(10, m / 2595) - 1); }
+  inline double mel2hz(double m) { return 700 * (std::pow(10, m / 2595) - 1); }
 
   // Twiddle factor computation
   void compTwiddle(void) {
@@ -62,7 +62,7 @@ v_c_d_t fft(v_c_d_t x)
 {
     // DFT
     unsigned int N = x.size(), k = N, n;
-    float thetaT = 3.14159265358979323846264338328L / N;
+    double thetaT = 3.14159265358979323846264338328L / N;
     c_d_t phiT = c_d_t(cos(thetaT), -sin(thetaT)), T;
     while (k > 1)
     {
@@ -195,7 +195,7 @@ v_c_d_t fft(v_c_d_t x)
       v2[i] = i + 0.5;
 
     dct.reserve(numFilters * (numCepstra));
-    float c = sqrt(2.0 / numFilters);
+    double c = sqrt(2.0 / numFilters);
     for (i = 0; i < numCepstra; i++) {
       v_d_t dtemp;
       for (j = 0; j < numFilters; j++)
@@ -207,8 +207,8 @@ v_c_d_t fft(v_c_d_t x)
   // Precompute filterbank
   void initFilterbank() {
     // Convert low and high frequencies to Mel scale
-    float lowFreqMel = hz2mel(lowFreq);
-    float highFreqMel = hz2mel(highFreq);
+    double lowFreqMel = hz2mel(lowFreq);
+    double highFreqMel = hz2mel(highFreq);
 
     // Calculate filter centre-frequencies
     v_d_t filterCentreFreq;
@@ -230,7 +230,7 @@ v_c_d_t fft(v_c_d_t x)
     for (int filt = 1; filt <= numFilters; filt++) {
       v_d_t ftemp;
       for (int bin = 0; bin < numFFTBins; bin++) {
-        float weight;
+        double weight;
         if (fftBinFreq[bin] < filterCentreFreq[filt - 1])
           weight = 0;
         else if (fftBinFreq[bin] <= filterCentreFreq[filt])
@@ -247,7 +247,7 @@ v_c_d_t fft(v_c_d_t x)
     }
   }
 
-  // Convert vector of float to string (for writing MFCC file output)
+  // Convert vector of double to string (for writing MFCC file output)
   std::string v_d_to_string(v_d_t vec) {
     std::stringstream vecStream;
     for (int i = 0; i < vec.size() - 1; i++) {
@@ -262,7 +262,7 @@ v_c_d_t fft(v_c_d_t x)
 public:
   // MFCC class constructor
   MFCC(int sampFreq = 5333, int nCep = 20, int winLength = 50,
-       int frameShift = 50, int numFilt = 12, float lf = 50, float hf = 2666) {
+       int frameShift = 50, int numFilt = 12, double lf = 50, double hf = 2666) {
     fs = sampFreq;        // Sampling frequency
     numCepstra = nCep;    // Number of cepstra
     numFilters = numFilt; // Number of Mel warped filters
@@ -310,7 +310,7 @@ public:
     applyLMFB();
     applyDct();
     for (auto it = mfcc.cbegin(); it != mfcc.cend(); ++it) {
-      v_f.push_back(static_cast<float>(*it));
+      v_f.push_back(static_cast<double>(*it));
     }
   }
   // Read input file stream, extract MFCCs and write to output file stream
