@@ -3,6 +3,7 @@
 ## Python module install
 
 pip3 install .
+
 python3 test.py
 
 ## Compilation
