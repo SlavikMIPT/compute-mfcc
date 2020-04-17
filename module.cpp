@@ -10,7 +10,7 @@ py::list process_impl(py::list &inList, int &sampFreq, int &nCep,
   unsigned int WINDOW_SIZE =
       static_cast<unsigned int>(kMFCCWinLength * 512 / 96.0);
   unsigned int HOP_SIZE =
-      static_cast<unsigned int>(kMFCCWinLength * 512 / 96.0);
+      static_cast<unsigned int>(kMFCCFrameShift * 512 / 96.0);
   py::list &li = inList;
   py::list lo;
   Math::v_d_t frame, out_vector;
