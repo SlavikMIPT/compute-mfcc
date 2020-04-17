@@ -2,33 +2,34 @@
 
 #include "MFCC.h"
 namespace py = pybind11;
-py::list process_impl(py::list &inList, int sampFreq = 5333, int nCep = 16,
-                      int winLength = 96, int frameShift = 96, int numFilt = 12,
-                      float lf = 50, float hf = 2666) {
+py::list process_impl(py::list &inList, int &sampFreq, int &nCep,
+                      int &winLength, int &frameShift, int &numFilt, float &lf,
+                      float &hf) {
   int kMFCCWinLength = winLength;  // 48 96 182
   int kMFCCFrameShift = frameShift;
   unsigned int WINDOW_SIZE =
       static_cast<unsigned int>(kMFCCWinLength * 512 / 96.0);
   unsigned int HOP_SIZE =
       static_cast<unsigned int>(kMFCCWinLength * 512 / 96.0);
-  py::list li = inList, lo;
+  py::list &li = inList;
+  py::list lo;
   Math::v_d_t frame, out_vector;
-  Math::MFCC mfcc_instance(sampFreq, nCep, winLength, frameShift, numFilt, lf,
-                           hf);
+  Math::MFCC *mfcc_instance =
+      new Math::MFCC(sampFreq, nCep, winLength, frameShift, numFilt, lf, hf);
   for (int i = 0; i <= inList.size() - WINDOW_SIZE; i += HOP_SIZE) {
     frame.clear();
     for (int j = i; j < i + WINDOW_SIZE; j++) {
       frame.push_back(li[j].cast<double>());
     }
     out_vector.clear();
-    mfcc_instance.processFrame<Math::v_d_t>(frame, out_vector);
+    mfcc_instance->processFrame<Math::v_d_t>(frame, out_vector);
     py::list tmp;
     for (auto it = out_vector.cbegin(); it != out_vector.cend(); ++it) {
       tmp.append(py::float_(*it));
     }
     lo.append(tmp);
   }
-
+  delete mfcc_instance;
   return lo;
 }
 

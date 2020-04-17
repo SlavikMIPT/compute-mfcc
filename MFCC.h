@@ -105,35 +105,6 @@ class MFCC {
     // for (unsigned int i = 0; i < N; i++)
     //	x[i] *= f;
   }
-  // Cooley-Tukey DIT-FFT recursive function
-  //   v_c_d_t fft(v_c_d_t x) {
-  //     int N = x.size();
-  //     if (N == 1)
-  //       return x;
-
-  //     v_c_d_t xe(N / 2, 0), xo(N / 2, 0), Xjo, Xjo2;
-  //     int i;
-
-  //     // Construct arrays from even and odd indices
-  //     for (i = 0; i < N; i += 2)
-  //       xe[i / 2] = x[i];
-  //     for (i = 1; i < N; i += 2)
-  //       xo[(i - 1) / 2] = x[i];
-
-  //     // Compute N/2-point FFT
-  //     Xjo = fft(xe);
-  //     Xjo2 = fft(xo);
-  //     Xjo.insert(Xjo.end(), Xjo2.begin(), Xjo2.end());
-
-  //     // Butterfly computations
-  //     for (i = 0; i <= N / 2 - 1; i++) {
-  //       c_d_t t = Xjo[i], tw = twiddle[N][i];
-  //       Xjo[i] = t + tw * Xjo[i + N / 2];
-  //       Xjo[i + N / 2] = t - tw * Xjo[i + N / 2];
-  //     }
-  //     return Xjo;
-  //   }
-
   //// Frame processing routines
   // Pre-emphasis and Hamming window
   void preEmphHam(void) {
@@ -297,7 +268,7 @@ class MFCC {
     return v_d_to_string(mfcc);
   }
   template <typename T>
-  void processFrame(v_d_t samples, T& v_f) {
+  void processFrame(v_d_t& samples, T& v_f) {
     // Add samples from the previous frame that overlap with the current frame
     // to the current samples and create the frame.
     frame = prevsamples;
