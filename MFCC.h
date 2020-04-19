@@ -275,7 +275,11 @@ class MFCC {
     for (int i = 0; i < samples.size(); i++) {
       frame.push_back(samples[i]);
     }
-    prevsamples.assign(frame.begin() + frameShiftSamples, frame.end());
+    // prevsamples.assign(frame.begin() + frameShiftSamples, frame.end());
+    prevsamples.clear();
+    for (int i = frameShiftSamples; i < frame.size(); i++) {
+      prevsamples.push_back(frame[i]);
+    }
     preEmphHam();
     computePowerSpec();
     applyLMFB();
@@ -292,7 +296,11 @@ class MFCC {
     for (int i = 0; i < N; i++) {
       frame.push_back(samples[i]);
     }
-    prevsamples.assign(frame.begin() + frameShiftSamples, frame.end());
+    // prevsamples.assign(frame.begin() + frameShiftSamples, frame.end());
+    prevsamples.clear();
+    for (int i = frameShiftSamples; i < frame.size(); i++) {
+      prevsamples.push_back(frame[i]);
+    }
     preEmphHam();
     computePowerSpec();
     applyLMFB();
